@@ -760,7 +760,8 @@ def render_sidebar():
         # API key
         st.markdown("---")
         st.markdown("### Configuration")
-        if not os.environ.get("ANTHROPIC_API_KEY"):
+        key = st.secrets["ANTHROPIC_API_KEY"] if "ANTHROPIC_API_KEY" in st.secrets else None
+        if not key:
             key = st.text_input("Anthropic API Key", type="password",
                                 placeholder="sk-ant-...")
             if key:
