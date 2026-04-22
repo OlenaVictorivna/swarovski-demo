@@ -166,7 +166,7 @@ CSS = """
     font-size: 0.72rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.80);
+    color: #FFFFFF;
     margin-bottom: 0.5rem;
     font-weight: 500;
 }
@@ -179,7 +179,7 @@ CSS = """
 }
 .score-card .unit {
     font-size: 0.72rem;
-    color: rgba(255,255,255,0.65);
+    color: #FFFFFF;
     margin-top: 0.3rem;
 }
 
@@ -259,9 +259,9 @@ CSS = """
 }
 .q-emoji  { font-size: 3rem; line-height: 1; }
 .q-title  { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 700; color: #FFFFFF; }
-.q-sub    { font-size: 0.8rem; color: rgba(255,255,255,0.78); margin-top: 3px; letter-spacing: 0.08em; }
+.q-sub    { font-size: 0.8rem; color: #FFFFFF; margin-top: 3px; letter-spacing: 0.08em; }
 .q-scores { margin-left: auto; text-align: right; }
-.q-scores span { display: block; font-size: 0.78rem; color: rgba(255,255,255,0.78); }
+.q-scores span { display: block; font-size: 0.78rem; color: #FFFFFF; }
 .q-scores strong { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: #FFFFFF; }
 
 /* ── Exec summary card ── */
@@ -750,11 +750,10 @@ def render_sidebar():
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("### Upload Procedure")
         uploaded = st.file_uploader(
-            "Drag & drop a PDF here",
+            "Upload Procedure (PDF)",
             type=["pdf"],
-            label_visibility="collapsed",
+            label_visibility="visible",
         )
 
         # API key
