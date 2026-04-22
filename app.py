@@ -422,19 +422,24 @@ def assign_quadrant(tc: float, bv: float) -> str:
 
 # ─────────────────────────── HELPERS ────────────────────────────────
 
-def load_system_prompt() -> str:
-    if not PROMPT_FILE.exists():
-        st.error(
-            "❌ `scoring_prompt.docx` not found next to `app.py`."
-        )
-        st.stop()
-    doc = Document(str(PROMPT_FILE))
+def _docx_to_text(doc) -> str:
     lines = [p.text for p in doc.paragraphs]
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
                 lines += [p.text for p in cell.paragraphs]
     return "\n".join(lines)
+
+
+def load_system_prompt(uploaded_prompt=None) -> str:
+    if uploaded_prompt is not None:
+        doc = Document(io.BytesIO(uploaded_prompt.read()))
+        uploaded_prompt.seek(0)
+        return _docx_to_text(doc)
+    if not PROMPT_FILE.exists():
+        st.error("❌ `scoring_prompt.docx` not found next to `app.py`.")
+        st.stop()
+    return _docx_to_text(Document(str(PROMPT_FILE)))
 
 
 def extract_pdf_text(uploaded_file) -> str:
@@ -751,9 +756,26 @@ def render_sidebar():
         """, unsafe_allow_html=True)
 
         uploaded = st.file_uploader(
-            "Upload Procedure Document",
+            "Procedure Document",
             type=["pdf"],
         )
+
+        st.markdown("---")
+        uploaded_prompt = st.file_uploader(
+            "Custom Scoring Prompt (optional)",
+            type=["docx"],
+            help="Upload a .docx prompt to override the default scoring template.",
+        )
+        if uploaded_prompt:
+            st.markdown(
+                '<span style="font-size:0.72rem;color:#00C896;">✓ Custom prompt loaded</span>',
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                '<span style="font-size:0.72rem;color:rgba(205,216,240,0.5);">Using default prompt</span>',
+                unsafe_allow_html=True,
+            )
 
         # API key
         st.markdown("---")
@@ -819,7 +841,7 @@ def render_sidebar():
         </div>
         """, unsafe_allow_html=True)
 
-    return uploaded
+    return uploaded, uploaded_prompt
 
 
 def render_welcome():
@@ -1138,7 +1160,7 @@ def _handle_chat_input(user_message: str):
 def main():
     st.markdown(CSS, unsafe_allow_html=True)
     init_state()
-    uploaded = render_sidebar()
+    uploaded, uploaded_prompt = render_sidebar()
 
     # ── Handle new upload + generate ──
     if uploaded is not None and os.environ.get("ANTHROPIC_API_KEY"):
@@ -1158,7 +1180,7 @@ def main():
 
                 with st.spinner("🤖 AI Assistant is scoring the procedure across 14 dimensions…"):
                     try:
-                        sys_prompt = load_system_prompt()
+                        sys_prompt = load_system_prompt(uploaded_prompt)
                         data = call_claude_scoring(sys_prompt, proc_text)
                     except json.JSONDecodeError as e:
                         st.error(f"AI Assistant returned non-JSON output: {e}"); return
