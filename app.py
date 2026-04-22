@@ -388,6 +388,17 @@ CSS = """
 .pill-red    { background: rgba(224,85,85,0.15);   color: #9C2424; }
 .pill-blue   { background: rgba(61,143,209,0.15);  color: #1A5A8C; }
 
+/* ── Fix sidebar file uploader duplicate button text ── */
+[data-testid="stSidebar"] button [aria-hidden="true"] {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+}
+[data-testid="stSidebar"] button p ~ p,
+[data-testid="stSidebar"] button span ~ span {
+    display: none !important;
+}
+
 /* ── Override Streamlit defaults ── */
 .stButton > button {
     font-family: 'DM Sans', sans-serif;
