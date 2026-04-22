@@ -751,7 +751,7 @@ def render_sidebar():
         """, unsafe_allow_html=True)
 
         uploaded = st.file_uploader(
-            "Procedure Document",
+            "Upload Procedure Document",
             type=["pdf"],
         )
 
