@@ -750,10 +750,15 @@ def render_sidebar():
         </div>
         """, unsafe_allow_html=True)
 
+        st.markdown(
+            '<p style="font-size:0.78rem;color:#E8D08A;letter-spacing:0.15em;'
+            'text-transform:uppercase;margin:0 0 6px;font-weight:500;">Upload Procedure</p>',
+            unsafe_allow_html=True,
+        )
         uploaded = st.file_uploader(
-            "Upload Procedure (PDF)",
+            "Upload Procedure PDF",
             type=["pdf"],
-            label_visibility="visible",
+            label_visibility="hidden",
         )
 
         # API key
